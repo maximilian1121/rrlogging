@@ -1,9 +1,9 @@
 import styled from "@emotion/styled";
-import { Tooltip, tooltipClasses, TooltipProps } from "@mui/material";
+import { Tooltip, tooltipClasses, TooltipProps, Theme } from "@mui/material";
 
 const HtmlTooltip = styled(({ className, ...props }: TooltipProps) => (
   <Tooltip {...props} classes={{ popper: className }} />
-))(({ theme }) => ({
+))(({ theme }: { theme: Theme }) => ({
   [`& .${tooltipClasses.tooltip}`]: {
     backgroundColor: '#f5f5f9',
     color: 'rgba(0, 0, 0, 0.87)',
