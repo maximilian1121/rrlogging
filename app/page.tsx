@@ -33,12 +33,6 @@ function HomeContent() {
         setSelectedTab(newValue);
     };
 
-    useEffect(() => {
-        if (selectedTab == 0) {
-            setSelectedJobId(null);
-        }
-    }, [selectedTab]);
-
     return (
         <div>
             <RRAppBar />

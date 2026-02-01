@@ -48,11 +48,7 @@ export async function GET(request: NextRequest) {
     const where = sql`
         WHERE message_lower LIKE ${"%" + search + "%"}
         ${levels && levels.length > 0 ? sql`AND level IN ${sql(levels)}` : sql``}
-        ${
-            environments && environments.length > 0
-                ? sql`AND environment IN ${sql(environments)}` 
-                : sql``
-        }
+        ${environments && environments.length > 0 ? sql`AND environment IN ${sql(environments)}` : sql``}
     `;
 
     const [{ total }] = await sql`
@@ -66,17 +62,19 @@ export async function GET(request: NextRequest) {
     `;
 
     const rows = await sql`
+    SELECT *
+    FROM (
         SELECT DISTINCT ON (message_lower, environment)
             *,
-            COUNT(*) OVER (
-                PARTITION BY message_lower, environment
-            ) AS count
+            COUNT(*) OVER (PARTITION BY message_lower, environment) AS count
         FROM logs
         ${where}
-        ORDER BY message_lower, environment, server_id, log_id DESC
-        LIMIT ${LIMIT}
-        OFFSET ${offset}
-    `;
+        ORDER BY message_lower, environment, logged_at DESC
+    ) AS sub
+    ORDER BY logged_at DESC
+    LIMIT ${LIMIT}
+    OFFSET ${offset}
+`;
 
     return NextResponse.json({
         rows,

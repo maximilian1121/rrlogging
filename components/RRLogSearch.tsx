@@ -435,16 +435,9 @@ export default function RRLogSearch({ onSelectJobId }: RRLogSearchProps) {
 
                                             <IconButton
                                                 onClick={() => {
-                                                    if (
-                                                        item.environment ==
-                                                        "Server"
-                                                    ) {
-                                                        onSelectJobId(
-                                                            item.server_id,
-                                                        );
-                                                    } else {
-                                                        enqueueSnackbar("Not implemented!", {variant: "warning"})
-                                                    }
+                                                    onSelectJobId(
+                                                        item.server_id,
+                                                    );
                                                 }}
                                                 className="ml-auto"
                                             >

@@ -29,22 +29,10 @@ export async function GET(request: NextRequest) {
         "Failed to load sound rbxassetid://",
         "MeshContentProvider failed to process https://asset",
         "SolidModelContentProvider failed to process https://assetdelivery.roblox.com",
+        "http://www.roblox.com/asset/",
+        "https://assetdelivery.roblox.com",
         "vip",
-        "❌ not enough tix. has: ",
-        "table: 0x",
-        "ability added: ",
-        "adding ability to player: ",
-        "Successfully saved data",
-        "escaped! Total: ",
-        "has died, moving to Lobby team",
-        "Aura reveal requested for killer",
-        "BoneTrap placed by: ",
-        "Chainsaw dash started.",
-        "Chainsaw dash initiated for player",
-        "Character found",
-        "Re-teleporting survivor ",
-        "Failed to load animation with sanitized ID rbxassetid",
-        "Remote event invocation queue exhausted for ReplicatedStorage.MusicControl"
+        "table:",
     ];
 
     for (const phrase of phrases) {

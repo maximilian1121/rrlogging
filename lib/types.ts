@@ -1,11 +1,11 @@
 type Log = {
-  log_id: string;
-  server_id: string | null;
-  message: string | null;
-  message_lower: string | null;
-  level: number | null;
-  logged_at: Date | null;
-  environment: string | null;
+  log_id: any;
+  server_id: string;
+  message: string;
+  message_lower: string;
+  level: number;
+  logged_at: Date;
+  environment: string;
   userid: number | null;
   count: number | null;
 };

@@ -19,30 +19,40 @@ async function checkAuth(req: NextRequest) {
 export async function GET(request: NextRequest) {
     const authorized = await checkAuth(request);
     if (!authorized) {
-        return NextResponse.json(
-            { error: "unauthorized lol" },
-            { status: 401 },
-        );
+        return NextResponse.json({ error: "unauthorized lol" }, { status: 401 });
     }
 
     const { searchParams } = new URL(request.url);
     const search = searchParams.get("search");
+    const server_id = searchParams.get("server_id");
+    const limit = parseInt(searchParams.get("limit") ?? "50");
+    const offset = parseInt(searchParams.get("offset") ?? "0");
 
     let data;
 
     if (search) {
         data = await sql`
-      SELECT *
-      FROM public.logs
-      WHERE message_lower LIKE ${"%" + search.toLowerCase() + "%"}
-      ORDER BY log_id ASC;
-    `;
+            SELECT *
+            FROM public.logs
+            WHERE message_lower LIKE ${"%" + search.toLowerCase() + "%"}
+            ORDER BY logged_at DESC
+            LIMIT ${limit} OFFSET ${offset};
+        `;
+    } else if (server_id) {
+        data = await sql`
+            SELECT *
+            FROM public.logs
+            WHERE server_id = ${server_id}
+            ORDER BY logged_at DESC
+            LIMIT ${limit} OFFSET ${offset};
+        `;
     } else {
         data = await sql`
-      SELECT *
-      FROM public.logs
-      ORDER BY log_id ASC;
-    `;
+            SELECT *
+            FROM public.logs
+            ORDER BY logged_at DESC
+            LIMIT ${limit} OFFSET ${offset};
+        `;
     }
 
     return NextResponse.json(data);
@@ -76,7 +86,10 @@ export async function POST(request: NextRequest) {
     }
 
     const rows = logs.map((log) => ({
-        server_id: log.server_id && log.server_id.trim() !== "" ? log.server_id : "studio",
+        server_id:
+            log.server_id && log.server_id.trim() !== ""
+                ? log.server_id
+                : "studio",
         message: log.message,
         message_lower: log.message_lower,
         level: log.level,
@@ -111,7 +124,7 @@ export async function POST(request: NextRequest) {
       )
     `;
 
-      global.globalEmitter.emit('log-added', {event: "log-added", rows});
+        global.globalEmitter.emit("log-added", { event: "log-added", rows });
 
         return NextResponse.json({ inserted: rows.length });
     } catch (err) {

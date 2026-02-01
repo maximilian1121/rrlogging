@@ -25,9 +25,6 @@ export async function GET(req: NextRequest) {
     if (process.env.NODE_ENV === "development") {
         const headers = new Headers();
 
-        const cookie = req.headers.get("cookie");
-        if (cookie) headers.set("cookie", cookie);
-
         if (hasApiKey) headers.set("x-api-key", apiKey!);
 
         const remote = await fetch(DEV_PROXY_URL, {
