@@ -6,7 +6,6 @@ import { Log } from "@/lib/types";
 import { Error, Info, Warning } from "@mui/icons-material";
 import { Divider, List, Paper, Typography } from "@mui/material";
 import Link from "@mui/material/Link";
-import { uuidv4 } from "@/lib/uuid";
 import { useSnackbar } from "notistack";
 import { useEffect, useRef, useState } from "react";
 import OnlineIndicator from "./OnlineIndicator";
@@ -22,7 +21,7 @@ type RobloxUser = {
     displayName: string;
 };
 
-const maxLogs = 200;
+const maxLogs = 500;
 
 export default function RRLiveLogs({ jobId, jobIdChange }: RRLiveLogsProps) {
     useIsAuthed("/login");
@@ -63,50 +62,58 @@ export default function RRLiveLogs({ jobId, jobIdChange }: RRLiveLogsProps) {
             .replaceAll("USERID", String(user.id));
     };
 
-    const addLog = async (log: Log) => {
-        log.message = await formatMessage(log.message, log.userid ?? 0);
-        setMostRecentTime(new Date());
-
-        const logAlreadyExists = allLogs.find(
-            (prevLog) => prevLog.log_id === log.log_id,
+    const addLogs = async (newLogs: Log[]) => {
+        const formattedLogs = await Promise.all(
+            newLogs.map(async (log) => ({
+                ...log,
+                message: await formatMessage(log.message, log.userid ?? 0),
+            }))
         );
 
-        if (!logAlreadyExists) setAllLogs((prev) => [...prev, log]);
-    };
+        setMostRecentTime(new Date());
 
-    useEffect(() => {
-        if (allLogs.length > maxLogs) {
-            setAllLogs((prev) => prev.slice(-maxLogs));
-        }
-    }, [allLogs]);
+        setAllLogs((prevLogs) => {
+            const combinedLogs = [...prevLogs, ...formattedLogs];
+
+            const uniqueLogsMap = new Map<string, Log>();
+            combinedLogs.forEach((log) => uniqueLogsMap.set(log.log_id, log));
+
+            const sortedLogs = Array.from(uniqueLogsMap.values()).sort(
+                (a, b) => new Date(a.logged_at).getTime() - new Date(b.logged_at).getTime()
+            );
+
+            return sortedLogs.slice(-maxLogs);
+        });
+    };
 
     useEffect(() => {
         events.forEach((event) => {
             if (event.event === "log-added") {
-                let rows: Log[] = event.rows
-
-                rows = rows.sort((a, b) => new Date(a.logged_at).getTime() - new Date(b.logged_at).getTime());
-
-                rows.forEach((log: Log) => {
-                    if (log.server_id === jobId) {
-                        addLog(log);
-                    }
-                });
+                const rows: Log[] = event.rows.filter(
+                    (log: Log) => log.server_id === jobId
+                );
+                if (rows.length) addLogs(rows);
             }
         });
-
         if (events.length > 0) clearEvents();
     }, [events, jobId]);
 
     useEffect(() => {
-        fetch("/api/log?server_id=" + encodeURIComponent(jobId ?? "studio"))
+        if (!jobId) return;
+
+        setLoading(true);
+        fetch("/api/log?server_id=" + encodeURIComponent(jobId))
             .then((res) => res.json())
-            .then((logs) => {
-                logs.forEach((log: Log) => {
-                    addLog(log);
-                });
-            });
-    }, []);
+            .then((logs: Log[]) => {
+                addLogs(logs);
+            })
+            .finally(() => setLoading(false));
+    }, [jobId]);
+
+    useEffect(() => {
+        if (!containerRef.current) return;
+        containerRef.current.scrollTop = containerRef.current.scrollHeight;
+    }, [allLogs]);
 
     if (!jobId)
         return (
@@ -129,11 +136,7 @@ export default function RRLiveLogs({ jobId, jobIdChange }: RRLiveLogsProps) {
                             "robloxPopup",
                             "width=900,height=700,resizable=yes,scrollbars=yes",
                         );
-                        if (
-                            !popup ||
-                            popup.closed ||
-                            typeof popup.closed === "undefined"
-                        ) {
+                        if (!popup || popup.closed || typeof popup.closed === "undefined") {
                             window.open(url, "_blank", "noopener,noreferrer");
                         }
                     }}
@@ -168,9 +171,10 @@ export default function RRLiveLogs({ jobId, jobIdChange }: RRLiveLogsProps) {
                                 <Typography
                                     className="flex-1"
                                     color={
-                                        ["info", "warning", "error"][
-                                            log.level - 1
-                                        ] as "info" | "warning" | "error"
+                                        ["info", "warning", "error"][log.level - 1] as
+                                            | "info"
+                                            | "warning"
+                                            | "error"
                                     }
                                 >
                                     {log.message}{" "}
