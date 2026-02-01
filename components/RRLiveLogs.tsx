@@ -2,7 +2,7 @@
 
 import { useEventsContext } from "@/contexts/EventsContext";
 import { useIsAuthed } from "@/hooks/Authed";
-import { Log } from "@/lib/types"
+import { Log } from "@/lib/types";
 import { Typography } from "@mui/material";
 import Link from '@mui/material/Link';
 import { useSnackbar } from "notistack";
