@@ -2,6 +2,7 @@
 
 import HtmlTooltip from "@/components/HtmlTooltip";
 import { useIsAuthed } from "@/hooks/Authed";
+import { Log } from "@/lib/types";
 import {
     Computer,
     Dns,
