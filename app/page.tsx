@@ -9,7 +9,7 @@ import { useIsAuthed } from "@/hooks/Authed";
 import { Box, Tab, Tabs } from "@mui/material";
 import { useRouter, useSearchParams } from "next/navigation";
 import { SnackbarProvider, useSnackbar } from "notistack";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 
 function a11yProps(index: number) {
     return {
@@ -24,7 +24,7 @@ function HomeContent() {
     const searchParams = useSearchParams();
 
     const searchQueryJobId = searchParams.get("job_id");
-    const router = useRouter()
+    const router = useRouter();
 
     const { enqueueSnackbar } = useSnackbar();
 
@@ -37,7 +37,7 @@ function HomeContent() {
     useEffect(() => {
         if (searchQueryJobId) {
             setSelectedJobId(searchQueryJobId);
-            setSelectedTab(1)
+            setSelectedTab(1);
         }
     }, [searchQueryJobId]);
 
@@ -63,8 +63,10 @@ function HomeContent() {
                 <CustomTabPanel value={selectedTab} index={0}>
                     <RRLogSearch
                         onSelectJobId={(JobId) => {
-                            router.push("/?job_id=" + encodeURIComponent(JobId))
-                            setSelectedTab(1)
+                            router.push(
+                                "/?job_id=" + encodeURIComponent(JobId),
+                            );
+                            setSelectedTab(1);
                         }}
                     />
                 </CustomTabPanel>
@@ -84,7 +86,9 @@ export default function Home() {
     return (
         <EventsProvider>
             <SnackbarProvider maxSnack={8}>
-                <HomeContent />
+                <Suspense fallback={<div>Loading...</div>}>
+                    <HomeContent />
+                </Suspense>
             </SnackbarProvider>
         </EventsProvider>
     );
