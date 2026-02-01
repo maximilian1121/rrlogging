@@ -75,10 +75,7 @@ export default function RRLiveLogs({ jobId, jobIdChange }: RRLiveLogsProps) {
         setAllLogs((prevLogs) => {
             const combinedLogs = [...prevLogs, ...formattedLogs];
 
-            const uniqueLogsMap = new Map<string, Log>();
-            combinedLogs.forEach((log) => uniqueLogsMap.set(log.log_id, log));
-
-            const sortedLogs = Array.from(uniqueLogsMap.values()).sort(
+            const sortedLogs = Array.from(combinedLogs.values()).sort(
                 (a, b) => new Date(a.logged_at).getTime() - new Date(b.logged_at).getTime()
             );
 
