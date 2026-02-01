@@ -40,7 +40,7 @@ export default function Home() {
   };
 
   return (
-    <div className="w-screen h-screen flex justify-center items-center bg-gray-100">
+    <div className="w-screen h-screen flex justify-center items-center">
       <Paper className="p-8 flex flex-col gap-4" elevation={3}>
         <h2 className="text-center text-xl font-semibold">Login</h2>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">

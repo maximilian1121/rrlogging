@@ -26,13 +26,13 @@ export async function GET(request: NextRequest) {
     }
 
     const { searchParams } = new URL(request.url);
-    let search = searchParams.get("search");
+
+    const search = (searchParams.get("search") ?? "").toLowerCase();
+    const offset = Math.max(parseInt(searchParams.get("offset") ?? "0"), 0);
+    const LIMIT = Math.min(parseInt(searchParams.get("limit") ?? "10"), 200);
+
     const filterLevels = searchParams.get("levels");
     const filterEnvironments = searchParams.get("environments");
-
-    if (!search) {
-        search = "%";
-    }
 
     const levels = filterLevels
         ? filterLevels
@@ -45,18 +45,45 @@ export async function GET(request: NextRequest) {
         ? filterEnvironments.split(",").map((l) => l.trim())
         : null;
 
-    const data = await sql`
-    SELECT DISTINCT ON (message_lower, environment)
-        *,
-        COUNT(*) OVER (
-            PARTITION BY message_lower, environment
-        ) as count
-    FROM logs
-    WHERE message_lower LIKE ${"%" + search.toLowerCase() + "%"}
-    ${levels && levels.length > 0 ? sql`AND level IN ${sql(levels)}` : sql``}
-    ${environments && environments.length > 0 ? sql`AND environment IN ${sql(environments)}` : sql``}
-    ORDER BY message_lower, environment, server_id, log_id DESC;
-`;
+    const where = sql`
+        WHERE message_lower LIKE ${"%" + search + "%"}
+        ${levels && levels.length > 0 ? sql`AND level IN ${sql(levels)}` : sql``}
+        ${
+            environments && environments.length > 0
+                ? sql`AND environment IN ${sql(environments)}` 
+                : sql``
+        }
+    `;
 
-    return NextResponse.json(data);
+    const [{ total }] = await sql`
+        SELECT COUNT(*)::int AS total
+        FROM (
+            SELECT 1
+            FROM logs
+            ${where}
+            GROUP BY message_lower, environment
+        ) AS grouped_logs
+    `;
+
+    const rows = await sql`
+        SELECT DISTINCT ON (message_lower, environment)
+            *,
+            COUNT(*) OVER (
+                PARTITION BY message_lower, environment
+            ) AS count
+        FROM logs
+        ${where}
+        ORDER BY message_lower, environment, server_id, log_id DESC
+        LIMIT ${LIMIT}
+        OFFSET ${offset}
+    `;
+
+    return NextResponse.json({
+        rows,
+        total,
+        limit: LIMIT,
+        offset,
+        pages: Math.ceil(total / LIMIT),
+        page: Math.floor(offset / LIMIT) + 1,
+    });
 }

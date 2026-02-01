@@ -9,3 +9,5 @@ type Log = {
   userid: number | null;
   count: number | null;
 };
+
+export type { Log };
