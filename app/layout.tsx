@@ -1,8 +1,8 @@
+import { ThemeProvider } from "@mui/material";
 import type { Metadata } from "next";
 import { Roboto, Roboto_Mono } from "next/font/google";
 import "./globals.css";
 import theme from "./theme";
-import { ThemeProvider } from "@mui/material";
 
 const geistSans = Roboto({
     variable: "--font-geist-sans",

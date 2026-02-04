@@ -10,5 +10,8 @@
         "**/.symlinks": true,
         "**/.plugin_symlinks": true
     },
-    "hide-files.files": []
+    "hide-files.files": [],
+    "cSpell.words": [
+        "favorited"
+    ]
 }

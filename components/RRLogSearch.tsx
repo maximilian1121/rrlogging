@@ -129,7 +129,7 @@ export default function RRLogSearch({ onSelectJobId }: RRLogSearchProps) {
                 <Typography variant="subtitle1">Log levels</Typography>
 
                 <Box className="flex flex-col">
-                    <FormControlLabel
+                    {/* <FormControlLabel
                         control={
                             <Checkbox
                                 checked={checkBox1}
@@ -148,7 +148,7 @@ export default function RRLogSearch({ onSelectJobId }: RRLogSearchProps) {
                                 Info
                             </Box>
                         }
-                    />
+                    /> */}
 
                     <FormControlLabel
                         control={

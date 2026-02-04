@@ -33,6 +33,10 @@ export async function GET(request: NextRequest) {
         "https://assetdelivery.roblox.com",
         "vip",
         "table:",
+        "UITextSizeConstraint's MaxFontSize as it is smaller than MinFontSize.",
+        "Multiple StyleLinks under Children may result in undefined behavior",
+        "Not enough TIX",
+        "All ability slots are full!"
     ];
 
     for (const phrase of phrases) {

@@ -97,6 +97,9 @@ export async function POST(request: NextRequest) {
         userid: log.userid ?? null,
     }));
 
+    // remove all logs with level 1 but still trigger the log-added events with them all still in there
+    const db_rows = rows.filter((row) => row.level !== 1);
+
     try {
         await sql`
       INSERT INTO logs (
@@ -114,7 +117,7 @@ export async function POST(request: NextRequest) {
         level,
         environment,
         userid
-      FROM jsonb_to_recordset(${sql.json(rows)}) AS t(
+      FROM jsonb_to_recordset(${sql.json(db_rows)}) AS t(
         server_id text,
         message text,
         message_lower text,
@@ -126,7 +129,7 @@ export async function POST(request: NextRequest) {
 
         global.globalEmitter.emit("log-added", { event: "log-added", rows });
 
-        return NextResponse.json({ inserted: rows.length });
+        return NextResponse.json({ inserted: db_rows.length });
     } catch (err) {
         console.error("DB insert failed:", err);
         return NextResponse.json({ error: "db exploded" }, { status: 500 });
