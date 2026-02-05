@@ -25,22 +25,15 @@ import { useEffect, useRef, useState } from "react";
 export default function MetricsSection() {
     const [loading, setLoading] = useState(true);
     const [data, setData] = useState<Metric[]>([]);
-    const [dateRangeStart, setDateRangeStart] = useState<Dayjs>(
-        dayjs().subtract(24, "hour"),
-    );
-    const [dateRangeEnd, setDateRangeEnd] = useState<Dayjs>(dayjs());
     const [dateRangePreset, setDateRangePreset] = useState<number | null>(1);
     const [realtimeMetrics, setRealtimeMetrics] =
         useState<RealtimeMetric | null>(null);
     const eventSourceRef = useRef<EventSource | null>(null);
     const retryTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-    const [zoomRange, setZoomRange] = useState<{
-        start: number | null;
-        end: number | null;
-    }>({
-        start: null,
-        end: null,
-    });
+    const [dateRangeStart, setDateRangeStart] = useState<Dayjs>(
+        dayjs().subtract(1, "hour"),
+    );
+    const [dateRangeEnd, setDateRangeEnd] = useState<Dayjs>(dayjs());
 
     useEffect(() => {
         let isMounted = true;
@@ -351,7 +344,10 @@ export default function MetricsSection() {
                                         <Box sx={{ width: "100%", px: 2 }}>
                                             <LineChart
                                                 height={chartHeights}
-                                                axisHighlight={{ x: "line", y: "line" }}
+                                                axisHighlight={{
+                                                    x: "line",
+                                                    y: "line",
+                                                }}
                                                 xAxis={[
                                                     {
                                                         scaleType: "time",
