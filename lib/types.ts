@@ -24,3 +24,25 @@ export function AbbreviateNumber(Number: number, Decimals?: number): string {
     const suffix = suffixes[Math.floor(log10 / 3) - 1] || "";
     return scaled.toString() + suffix;
 }
+
+export interface Metric {
+    id: string;
+    active: string;
+    visits: string;
+    likes: string;
+    dislikes: string;
+    favorites: string;
+    recorded_at: string;
+}
+
+export interface RealtimeMetric {
+    active_players: number;
+    visits: number;
+    likes: number;
+    dislikes: number;
+    favorites: number;
+    rate_limits: {
+        stats_fetch: { max: number; remaining: number; reset_in: number };
+        votes_fetch: { max: number; remaining: number; reset_in: number };
+    };
+}

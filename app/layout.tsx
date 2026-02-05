@@ -1,4 +1,4 @@
-import { ThemeProvider } from "@mui/material";
+import { CssBaseline, ThemeProvider } from "@mui/material";
 import type { Metadata } from "next";
 import { Roboto, Roboto_Mono } from "next/font/google";
 import "./globals.css";
@@ -15,8 +15,8 @@ const geistMono = Roboto_Mono({
 });
 
 export const metadata: Metadata = {
-    title: "Rampant Rage logs viewer",
-    description: "View the errors lol",
+    title: "Rampant Rage",
+    description: "Rampant Rages AMAZING Website",
 };
 
 export default function RootLayout({
@@ -27,9 +27,12 @@ export default function RootLayout({
     return (
         <html lang="en">
             <body
-                className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+                className={`${geistSans.variable} ${geistMono.variable} antialiased bg-white dark:bg-[#121212]`}
             >
-                <ThemeProvider theme={theme}>{children}</ThemeProvider>
+                <ThemeProvider theme={theme}>
+                    <CssBaseline />
+                    {children}
+                </ThemeProvider>
             </body>
         </html>
     );

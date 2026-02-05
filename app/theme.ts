@@ -1,11 +1,11 @@
 "use client";
-import { deepOrange } from "@mui/material/colors";
+import { indigo } from "@mui/material/colors";
 import { createTheme } from "@mui/material/styles";
 
 const theme = createTheme({
-    palette: {
-        primary: deepOrange,
-        secondary: deepOrange,
+    colorSchemes: {
+        dark: true,
+        light: true,
     },
 });
 
