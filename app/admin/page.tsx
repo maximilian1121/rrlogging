@@ -1,15 +1,16 @@
 "use client";
 
+import RRAppBar from "@/app/admin/RRAppBar";
+import RRLiveLogs from "@/app/admin/RRLiveLogs";
+import RRLogSearch from "@/app/admin/RRLogSearch";
 import CustomTabPanel from "@/components/CustomTabPanel";
-import RRAppBar from "@/components/RRAppBar";
-import RRLiveLogs from "@/components/RRLiveLogs";
-import RRLogSearch from "@/components/RRLogSearch";
 import { EventsProvider } from "@/contexts/EventsContext";
 import { useIsAuthed } from "@/hooks/Authed";
 import { Box, Tab, Tabs } from "@mui/material";
-import { useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { SnackbarProvider, useSnackbar } from "notistack";
 import { Suspense, useEffect, useState } from "react";
+import BugReports from "./bug-reports";
 
 function a11yProps(index: number) {
     return {
@@ -22,6 +23,7 @@ function HomeContent() {
     const [selectedTab, setSelectedTab] = useState(0);
     const [selectedJobId, setSelectedJobId] = useState<string | null>(null);
     const searchParams = useSearchParams();
+    const pathname = usePathname()
 
     const searchQueryJobId = searchParams.get("job_id");
     const router = useRouter();
@@ -47,7 +49,7 @@ function HomeContent() {
 
     return (
         <div>
-            <RRAppBar/>
+            <RRAppBar />
             <main className="max-w-6xl mx-auto m-8 gap-4 flex flex-col h-full">
                 <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
                     <Tabs
@@ -57,15 +59,16 @@ function HomeContent() {
                     >
                         <Tab label="Search logs" {...a11yProps(0)} />
                         <Tab label="Server" {...a11yProps(1)} />
+                        <Tab label="Bug Reports" {...a11yProps(1)} />
                     </Tabs>
                 </Box>
 
                 <CustomTabPanel value={selectedTab} index={0}>
                     <RRLogSearch
                         onSelectJobId={(JobId) => {
-                            router.push(
-                                "/admin?job_id=" + encodeURIComponent(JobId),
-                            );
+                            const params = new URLSearchParams(searchParams.toString())
+                            params.set("job_id", JobId)
+                            router.push(`${pathname}?${params.toString()}`)
                             setSelectedTab(1);
                         }}
                     />
@@ -76,6 +79,10 @@ function HomeContent() {
                         jobId={selectedJobId}
                         jobIdChange={setSelectedJobId}
                     />
+                </CustomTabPanel>
+
+                <CustomTabPanel value={selectedTab} index={2}>
+                    <BugReports />
                 </CustomTabPanel>
             </main>
         </div>

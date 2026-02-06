@@ -1,13 +1,13 @@
 "use client";
 
+import { useEventsContext } from "@/contexts/EventsContext";
+import { useIsAuthed } from "@/hooks/Authed";
+import { Logout } from "@mui/icons-material";
+import { Button, Chip } from "@mui/material";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import { useIsAuthed } from "@/hooks/Authed";
-import { useEventsContext } from "@/contexts/EventsContext";
-import { Button, Chip } from "@mui/material";
-import { Logout } from "@mui/icons-material";
 import { useRouter } from "next/navigation";
 
 export default function RRAppBar() {

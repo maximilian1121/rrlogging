@@ -1,8 +1,8 @@
 "use client";
 
 import PublicAppBar from "@/components/PublicAppBar";
+import { isTrusted } from "@/lib/utils";
 import { AccountCircle, Add, Remove, Warning } from "@mui/icons-material";
-import { TRUSTED_ATTACHMENTS } from "@/lib/utils";
 import {
     Box,
     Button,
@@ -12,7 +12,6 @@ import {
     DialogContent,
     DialogContentText,
     DialogTitle,
-    Divider,
     FormControlLabel,
     IconButton,
     InputAdornment,
@@ -22,7 +21,7 @@ import {
     TextareaAutosize,
     TextField,
     Tooltip,
-    Typography,
+    Typography
 } from "@mui/material";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -186,9 +185,6 @@ export default function BugReporting() {
         }
     };
 
-    const isTrusted = (url: string) =>
-        TRUSTED_ATTACHMENTS.some((trusted) => url.startsWith(trusted));
-
     return (
         <>
             <PublicAppBar />
@@ -312,10 +308,12 @@ export default function BugReporting() {
                                             <InputAdornment position="start">
                                                 {robloxUserPFPUrl &&
                                                 robloxUserExists ? (
-                                                    <img
+                                                    <Image
                                                         src={robloxUserPFPUrl}
                                                         className="h-6 w-6 rounded-full object-cover"
                                                         alt="Roblox Avatar"
+                                                        width={6}
+                                                        height={6}
                                                     />
                                                 ) : (
                                                     <AccountCircle />

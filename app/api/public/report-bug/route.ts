@@ -1,14 +1,11 @@
-import { NextRequest, NextResponse } from "next/server";
-import { rateLimit } from "@/lib/rateLimit";
 import sql from "@/lib/db";
-import { TRUSTED_ATTACHMENTS } from "@/lib/utils";
+import { rateLimit } from "@/lib/rateLimit";
+import { isTrusted } from "@/lib/utils";
+import { NextRequest, NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
 
 const MIN_BUG_DESCRIPTION_LENGTH = 100;
-
-const isTrusted = (url: string) =>
-    TRUSTED_ATTACHMENTS.some((trusted) => url.startsWith(trusted));
 
 async function robloxUserExists(username: string) {
     if (!username.trim()) return false;
@@ -107,7 +104,7 @@ export async function POST(req: NextRequest) {
 
     try {
         console.log("Attempting DB Insert...");
-        const contactInfoJson = JSON.stringify(contact_info);
+        const contactInfoJson = contact_info;
         const attachmentsArray = attachments;
 
         await sql`

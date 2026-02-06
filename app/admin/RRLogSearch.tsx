@@ -1,6 +1,6 @@
 "use client";
 
-import HtmlTooltip from "@/components/HtmlTooltip";
+import HtmlTooltip from "@/app/admin/HtmlTooltip";
 import { useIsAuthed } from "@/hooks/Authed";
 import { Log } from "@/lib/types";
 import {
