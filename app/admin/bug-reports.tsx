@@ -2,13 +2,11 @@
 
 import { copyTextToClipboard, getFileType } from "@/lib/utils";
 import { Close } from "@mui/icons-material";
-import { SiImgur } from "react-icons/si";
 import {
     AppBar,
     Box,
     Dialog,
     Divider,
-    Grid,
     IconButton,
     List,
     ListItem,
@@ -22,10 +20,11 @@ import {
 } from "@mui/material";
 import { useSnackbar } from "notistack";
 import { useEffect, useState } from "react";
-import { FaDiscord, FaYoutube } from "react-icons/fa";
+import { FaDiscord } from "react-icons/fa";
 import { AttachmentRenderer } from "./attatchment-render";
-import RobloxUserDisplay from "./roblox-user-link";
 import GetIconForUrl from "./get-icon-for-url";
+import RobloxUserDisplay from "./roblox-user-link";
+import Grid from "@mui/material/Grid";
 
 type BugReport = {
     id: number;
@@ -149,10 +148,12 @@ export default function BugReports() {
                                             >
                                                 {mediaItems.map((url, idx) => (
                                                     <Grid
-                                                        item
-                                                        xs={12}
-                                                        md={6}
                                                         key={idx}
+                                                        {...({
+                                                            item: true,
+                                                            xs: 12,
+                                                            md: 6,
+                                                        } as any)}
                                                     >
                                                         <AttachmentRenderer
                                                             url={url}
@@ -187,7 +188,9 @@ export default function BugReports() {
                                                                         1
                                                                 }
                                                             >
-                                                                <GetIconForUrl url={url}/>
+                                                                <GetIconForUrl
+                                                                    url={url}
+                                                                />
                                                                 <AttachmentRenderer
                                                                     url={url}
                                                                 />
