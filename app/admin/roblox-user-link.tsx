@@ -24,11 +24,18 @@ export default function RobloxClientComponent({
 
     return (
         <>
-            <IconButton href={`https://roblox.com/users/${userData && userData.id}`} target="_blank">
-                <Image
-                    height={32}
-                    width={32}
-                    src={userData && userData.profile_url || "/api/public/get-roblox-user/picture/1"}
+            <IconButton
+                href={`https://roblox.com/users/${userData && userData.id}`}
+                target="_blank"
+                size="small"
+            >
+                <img
+                    width={16}
+                    height={16}
+                    src={
+                        (userData && userData.profile_url) ||
+                        "/api/public/get-roblox-user/picture/1"
+                    }
                     alt=""
                     className="rounded-full"
                 />
