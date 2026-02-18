@@ -115,6 +115,7 @@ export async function POST(request: NextRequest) {
         "GetServerChannelRemote not available",
         "shop open",
         "Could not find player from character",
+        'SpecHeads is not a valid member of Folder "Players.USERNAME.Settings"',
         "Infinite yield possible on 'Workspace.USERNAME:WaitForChild(\"HumanoidRootPart\")'",
     ];
 
