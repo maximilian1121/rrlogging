@@ -19,7 +19,10 @@ async function checkAuth(req: NextRequest) {
 export async function GET(request: NextRequest) {
     const authorized = await checkAuth(request);
     if (!authorized) {
-        return NextResponse.json({ error: "unauthorized lol" }, { status: 401 });
+        return NextResponse.json(
+            { error: "unauthorized lol" },
+            { status: 401 },
+        );
     }
 
     const { searchParams } = new URL(request.url);
@@ -97,8 +100,33 @@ export async function POST(request: NextRequest) {
         userid: log.userid ?? null,
     }));
 
-    // remove all logs with level 1 but still trigger the log-added events with them all still in there
-    const db_rows = rows.filter((row) => row.level !== 1);
+    const BANNED_KEYWORDS = [
+        "Re-teleporting survivor USERNAME",
+        "CLONE CREATED",
+        "CLONE PIVOTED",
+        "SKIN VALUE",
+        "Path computation failed: nil",
+        "HUMANOIDROOTPART ANCHORED",
+        "ALL SCRIPTS DESTROYED IN CLONE",
+        "CLONE PARENTED TO WORKSPACE",
+        "RAHHREAHREHAREHRHEAHRESAHFSHDFYUHSDUG",
+        "SKIN VALUE: ",
+        "Setting GuiService.SelectedObject to invalid GuiObject",
+        "GetServerChannelRemote not available",
+        "shop open",
+        "Could not find player from character",
+        "Infinite yield possible on 'Workspace.USERNAME:WaitForChild(\"HumanoidRootPart\")'",
+    ];
+
+    const db_rows = rows.filter((row) => {
+        const isLevelOne = row.level === 1;
+
+        const hasBannedKeyword = BANNED_KEYWORDS.some((keyword) =>
+            row.message_lower?.includes(keyword.toLowerCase()),
+        );
+
+        return !isLevelOne && !hasBannedKeyword;
+    });
 
     try {
         await sql`
