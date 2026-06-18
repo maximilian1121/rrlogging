@@ -3,17 +3,12 @@
 import { AbbreviateNumber, Metric, RealtimeMetric } from "@/lib/types";
 
 import {
-    AccountCircle,
-    Star,
-    ThumbDown,
-    ThumbUp,
     TrendingDown,
     TrendingUp,
 } from "@mui/icons-material";
 
 import {
     Box,
-    InputLabel,
     MenuItem,
     Paper,
     Select,
@@ -26,8 +21,15 @@ import { DateTimePicker, renderTimeViewClock } from "@mui/x-date-pickers";
 import dayjs, { Dayjs } from "dayjs";
 import { useEffect, useMemo, useRef, useState } from "react";
 
+interface ChartDataResponse {
+    bucket: string;
+    points: number;
+    data: Metric[];
+}
+
 export default function MetricsSection() {
-    const [loading, setLoading] = useState(true);
+    // Removed unused 'loading' state assignment variable
+    const [, setLoading] = useState(true);
     const [data, setData] = useState<Metric[]>([]);
     const [dateRangePreset, setDateRangePreset] = useState<number | null>(24);
     const [realtimeMetrics, setRealtimeMetrics] =
@@ -87,8 +89,8 @@ export default function MetricsSection() {
 
         fetch(url)
             .then((res) => res.json())
-            .then((data: Metric[]) => {
-                setData(data);
+            .then((resData: ChartDataResponse) => {
+                setData(resData.data || []);
                 setLoading(false);
             })
             .catch((err) => {
@@ -97,11 +99,11 @@ export default function MetricsSection() {
             });
     }, [dateRangeStart, dateRangeEnd]);
 
-    // normalize once
+    // normalize once - explicitly typing 'item' as Metric fixes both TS errors
     const normalizedData = useMemo(() => {
-        return data.map((item) => ({
+        return data.map((item: Metric) => ({
             ...item,
-            ts: dayjs(item.recorded_at).valueOf(),
+            ts: dayjs(item.bucket).valueOf(),
         }));
     }, [data]);
 
@@ -142,7 +144,7 @@ export default function MetricsSection() {
     );
 
     const getTrend = (arr: number[], lookback = 5) => {
-        if (arr.length < 2) return { text: "STABLE", color: "gray" };
+        if (arr.length < 2) return { text: "STABLE", color: "gray", icon: null };
 
         const slice = arr.slice(-lookback);
         const first = slice[0];
@@ -151,7 +153,7 @@ export default function MetricsSection() {
         const delta = last - first;
 
         if (!first || Math.abs(delta) < 0.01 * Math.max(1, Math.abs(first))) {
-            return { text: "STABLE", color: "gray" };
+            return { text: "STABLE", color: "gray", icon: null };
         }
 
         return delta > 0

@@ -1,5 +1,5 @@
 type Log = {
-  log_id: any;
+  log_id: unknown;
   server_id: string;
   message: string;
   message_lower: string;
@@ -32,7 +32,8 @@ export interface Metric {
     likes: string;
     dislikes: string;
     favorites: string;
-    recorded_at: string;
+    // Updated from recorded_at to match your new API bucket timeline format
+    bucket: string; 
 }
 
 export interface RealtimeMetric {
