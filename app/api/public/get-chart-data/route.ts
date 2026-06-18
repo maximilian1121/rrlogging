@@ -33,19 +33,18 @@ export async function GET(request: NextRequest) {
 
     const metrics = await sql`
     SELECT
-      date_trunc(${bucket}, recorded_at) AS bucket,
+  date_trunc(${bucket}, recorded_at) AS bucket,
 
-      COUNT(*)::int AS count,
+  SUM(active) AS active,
+  SUM(visits) AS visits,
+  SUM(likes) AS likes,
+  SUM(dislikes) AS dislikes,
+  SUM(favorites) AS favorites
 
-      -- safe numeric aggregation (prevents silent crashes)
-      AVG(NULLIF(value, 0)) AS avg_value,
-      MIN(value) AS min_value,
-      MAX(value) AS max_value
-
-    FROM metrics
-    WHERE recorded_at BETWEEN ${start} AND ${end}
-    GROUP BY bucket
-    ORDER BY bucket ASC
+FROM metrics
+WHERE recorded_at BETWEEN ${start} AND ${end}
+GROUP BY bucket
+ORDER BY bucket ASC;
   `;
 
     return Response.json({
