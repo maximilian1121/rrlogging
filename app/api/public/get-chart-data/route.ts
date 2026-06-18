@@ -32,20 +32,20 @@ export async function GET(request: NextRequest) {
     const bucket = getBucket(rangeMs);
 
     const metrics = await sql`
-    SELECT
-  date_trunc(${bucket}, recorded_at) AS bucket,
+  SELECT
+    date_trunc(${bucket}, recorded_at) AS bucket,
 
-  SUM(active) AS active,
-  SUM(visits) AS visits,
-  SUM(likes) AS likes,
-  SUM(dislikes) AS dislikes,
-  SUM(favorites) AS favorites
+    SUM(active) AS active,
+    SUM(visits) AS visits,
+    SUM(likes) AS likes,
+    SUM(dislikes) AS dislikes,
+    SUM(favorites) AS favorites
 
-FROM metrics
-WHERE recorded_at BETWEEN ${start} AND ${end}
-GROUP BY bucket
-ORDER BY bucket ASC;
-  `;
+  FROM metrics
+  WHERE recorded_at BETWEEN ${start} AND ${end}
+  GROUP BY bucket
+  ORDER BY bucket ASC
+`;
 
     return Response.json({
         bucket,
