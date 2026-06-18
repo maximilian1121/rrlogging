@@ -1,5 +1,6 @@
 type Log = {
-  log_id: unknown;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  log_id: any;
   server_id: string;
   message: string;
   message_lower: string;
