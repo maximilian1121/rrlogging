@@ -1,5 +1,4 @@
 type Log = {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   log_id: any;
   server_id: string;
   message: string;
@@ -33,8 +32,7 @@ export interface Metric {
     likes: string;
     dislikes: string;
     favorites: string;
-    // Updated from recorded_at to match your new API bucket timeline format
-    bucket: string; 
+    recorded_at: string;
 }
 
 export interface RealtimeMetric {
