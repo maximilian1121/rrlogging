@@ -5,7 +5,6 @@ function getBucket(rangeMs: number) {
     const hours = rangeMs / (1000 * 60 * 60);
 
     if (hours <= 6) return "minute";
-    if (hours <= 24) return "5 minutes";
     if (hours <= 24 * 7) return "hour";
     return "day";
 }
